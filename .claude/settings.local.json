@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:\\\\Users\\\\pcy\\\\boostcamp\\\\commit-to-blog\\\\docs\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\pcy\\\\.claude\\\\skills\\\\development-checklist-generator\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\pcy\\boostcamp\\commit-to-blog",
+      "C:\\Users\\pcy\\.claude\\skills"
+    ]
+  }
+}
