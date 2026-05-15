@@ -24,7 +24,7 @@
 - [x] `stores/useAuthStore.ts` — `supabase.auth.getSession()` 구독, user/session 저장 (High)
 
 ### Zustand 스토어
-- [ ] `stores/useCommitStore.ts` — selectedRepo/Branch/Commit, generatedSummary, isSummaryStreaming (High)
+- [x] `stores/useCommitStore.ts` — selectedRepo/Branch/Commit, generatedSummary, isSummaryStreaming (High)
 
 ## Phase 2: 기능 구현
 
