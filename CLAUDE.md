@@ -11,6 +11,9 @@ GitHub 커밋을 AI 블로그 포스트로 변환하는 웹 애플리케이션
 | 서버 상태 | TanStack Query v5 |
 | 스타일 | Tailwind CSS |
 | 테스트 | Vitest + Testing Library |
+| DB | Supabase (PostgreSQL) |
+| DB 클라이언트 | supabase-js |
+| 인증 | Supabase Auth |
 
 ## 폴더 구조
 
@@ -31,8 +34,10 @@ hooks/
 ├── useCommits.ts              # queryKey: ['commits', repo, branch], staleTime 2m
 └── usePosts.ts                # queryKey: ['posts'], CRUD mutations
 stores/
-├── useAuthStore.ts            # user, accessToken, login/logout
+├── useAuthStore.ts            # Supabase Auth 세션 (user, session)
 └── useCommitStore.ts          # selectedRepo/Branch/Commit, generatedSummary
+lib/
+└── supabase.ts                # supabase-js 클라이언트 싱글턴
 types/index.ts
 
 # Backend (Express)
@@ -41,7 +46,7 @@ server/
 ├── routes/
 │   ├── github.ts              # GitHub API 프록시 (커밋 목록·상세)
 │   ├── ai.ts                  # LLM API 프록시 (chat/completions 스트리밍)
-│   └── posts.ts               # 포스트 CRUD
+│   └── posts.ts               # 포스트 CRUD (Supabase DB 연동)
 └── .env                       # API 토큰 보관 (커밋 제외)
 ```
 
@@ -67,8 +72,14 @@ Browser → React Client(Next.js) → Express Server → GitHub API  (커밋 목
 - 입력: 커밋 메시지 + diff + 블로그 변환 프롬프트
 - 출력: 스트리밍 응답 → React Client로 전달
 
+**Supabase (DB · 인증)**
+- 클라이언트: `lib/supabase.ts`에 `createClient()` 싱글턴으로 관리
+- 인증: Supabase Auth — `supabase.auth.signInWithOAuth({ provider: 'github' })` 활용
+- 세션: `useAuthStore`에서 `supabase.auth.getSession()` 구독, user/session 저장
+- DB: `server/routes/posts.ts`에서 supabase-js로 PostgreSQL 읽기·쓰기
+
 **토큰 보안 규칙**
-- `GITHUB_TOKEN`, `LLM_API_KEY` 등 모든 시크릿은 `server/.env`에 보관
+- `GITHUB_TOKEN`, `LLM_API_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` 등 모든 시크릿은 `server/.env`에 보관
 - `.env`는 반드시 `.gitignore`에 포함, 커밋 금지
 - `.env.example`을 커밋해 팀원이 필요한 키 목록을 알 수 있게 한다
 
